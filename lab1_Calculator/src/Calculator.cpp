@@ -1,4 +1,7 @@
 ﻿#include "Calculator.h"
+#include <windows.h>
+#include <filesystem>
+#include <iostream>
 #include <stack>
 #include <sstream>
 #include <unordered_map>
@@ -8,12 +11,55 @@ Calculator::Calculator(){
 }
 
 Calculator::~Calculator() {
-
+	for (void* handle : plugin_handles) {
+		FreeLibrary((HMODULE)handle);
+	}
 }
 
 // ЗАгрузка плагинов
 void Calculator::loadPlugins() {
+	std::string pluginDir = "./plugins"; // Путь к папке с плагинами .dll
 
+	// Проверка на то есть ли такая папка
+	if (!std::filesystem::exists(pluginDir) || !std::filesystem::is_directory(pluginDir)) {
+		std::cout << "Ошибка: директория не найдела." << std::endl;
+		std::filesystem::create_directory(pluginDir);
+		return;
+	}
+
+	// Поиск всех файлов с расширением .dll
+	for (const auto& entry : std::filesystem::directory_iterator(pluginDir)) {
+		if (entry.path().extension() == ".dll") {
+			std::cout << "Загружка плагина: " << entry.path().string() << std::endl;
+
+			// Загрудка DLL в память 
+			HMODULE handle = LoadLibrary(entry.path().c_str());
+			if (handle == NULL) {
+				std::cerr << "Ошибка загрузки DLL: " << entry.path().string() << std::endl;
+				continue;
+			}
+
+			// Поиск в DLL функции с именем getFunctionName
+			auto getFuncName = (const char* (*)())GetProcAddress(handle, "getFunctionName");
+				
+			// Поиск в DLL функции с именем execute
+			auto func = (FunctionPtr)GetProcAddress(handle, "execute");
+			
+			if (getFuncName == nullptr || func == nullptr) {
+				std::cerr << "Не удалось найти функции в " << entry.path().string() << std::endl;
+				FreeLibrary(handle);
+				continue;
+			}
+
+			// Получаем имя функции и сохраняем ее
+			std::string funcName = getFuncName();
+			functions[funcName] = func;
+
+			// Сохраняем хэнд, чтобы потом освободить память 
+			plugin_handles.push_back(handle);
+			std::cout << "Функция загружена " << funcName << std::endl;
+		}
+	}
 }
 
 double Calculator::calculate(const std::string& expression) {
