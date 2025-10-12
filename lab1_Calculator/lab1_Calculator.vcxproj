@@ -19,13 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\evaluator.cpp" />
+    <ClCompile Include="src\Calculator.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\parser.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\evaluator.h" />
-    <ClInclude Include="include\parser.h" />
+    <ClInclude Include="include\Calculator.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
