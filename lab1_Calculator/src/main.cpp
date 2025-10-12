@@ -6,7 +6,10 @@ int main(){
     setlocale(LC_ALL, "ru");
     Calculator calc;
 
+    calc.loadPlugins();
+
     std::string expression = "16 + 4 * ( 3 - 1 )";
+
     double result = calc.calculate(expression);
 
     std::cout << expression << std::endl;

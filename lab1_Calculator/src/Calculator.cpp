@@ -1,15 +1,27 @@
-#include "Calculator.h"
+п»ї#include "Calculator.h"
 #include <stack>
 #include <sstream>
 #include <unordered_map>
 #include <stdexcept>
+
+Calculator::Calculator(){
+}
+
+Calculator::~Calculator() {
+
+}
+
+// Р—РђРіСЂСѓР·РєР° РїР»Р°РіРёРЅРѕРІ
+void Calculator::loadPlugins() {
+
+}
 
 double Calculator::calculate(const std::string& expression) {
 	std::vector<std::string> rpn = to_rpn(expression);
 	return evaluate_rpn(rpn);
 }
 
-// Реализация парсера 
+// Р РµР°Р»РёР·Р°С†РёСЏ РїР°СЂСЃРµСЂР° 
 std::vector<std::string> Calculator::to_rpn(const std::string& expression) {
 	std::vector<std::string> output_queue;
 	std::stack<std::string> operator_stack;
@@ -18,12 +30,12 @@ std::vector<std::string> Calculator::to_rpn(const std::string& expression) {
 	std::string token;
 
 	while (ss >> token) {
-		// Проверка на то, что токен число
+		// РџСЂРѕРІРµСЂРєР° РЅР° С‚Рѕ, С‡С‚Рѕ С‚РѕРєРµРЅ С‡РёСЃР»Рѕ
 		if (isdigit(token[0]) || (token.length() > 1 && isdigit(token[1]))) {
 			output_queue.push_back(token);
 		}
 
-		// Проверка на то, что токен один из оперторов
+		// РџСЂРѕРІРµСЂРєР° РЅР° С‚Рѕ, С‡С‚Рѕ С‚РѕРєРµРЅ РѕРґРёРЅ РёР· РѕРїРµСЂС‚РѕСЂРѕРІ
 		else if (token == "+" || token == "-" || token == "*" || token == "/") {
 			while (!operator_stack.empty() && get_precedence(operator_stack.top()) >= get_precedence(token)) {
 				output_queue.push_back(operator_stack.top());
@@ -32,25 +44,25 @@ std::vector<std::string> Calculator::to_rpn(const std::string& expression) {
 			operator_stack.push(token);
 		}
 
-		// Проверка на то, что токен ооткрывающая скобка
+		// РџСЂРѕРІРµСЂРєР° РЅР° С‚Рѕ, С‡С‚Рѕ С‚РѕРєРµРЅ РѕРѕС‚РєСЂС‹РІР°СЋС‰Р°СЏ СЃРєРѕР±РєР°
 		else if (token == "(") {
 			operator_stack.push(token);
 		}
 
-		// Проверка на то, что токен закрывающая скобка
+		// РџСЂРѕРІРµСЂРєР° РЅР° С‚Рѕ, С‡С‚Рѕ С‚РѕРєРµРЅ Р·Р°РєСЂС‹РІР°СЋС‰Р°СЏ СЃРєРѕР±РєР°
 		else if (token == ")") {
-			// Перемещаем операторы из стека в очередь, пока не встретим открывающую скобку
+			// РџРµСЂРµРјРµС‰Р°РµРј РѕРїРµСЂР°С‚РѕСЂС‹ РёР· СЃС‚РµРєР° РІ РѕС‡РµСЂРµРґСЊ, РїРѕРєР° РЅРµ РІСЃС‚СЂРµС‚РёРј РѕС‚РєСЂС‹РІР°СЋС‰СѓСЋ СЃРєРѕР±РєСѓ
 			while (!operator_stack.empty() && operator_stack.top() != "(") {
 				output_queue.push_back(operator_stack.top());
 				operator_stack.pop();
 			}
-			// Удаляем открывающую скобку из стека
+			// РЈРґР°Р»СЏРµРј РѕС‚РєСЂС‹РІР°СЋС‰СѓСЋ СЃРєРѕР±РєСѓ РёР· СЃС‚РµРєР°
 			if (!operator_stack.empty()) {
 				operator_stack.pop();
 			}
 		}
 	}
-	// Перемещаем все оставшеся операторы из стека в очередь
+	// РџРµСЂРµРјРµС‰Р°РµРј РІСЃРµ РѕСЃС‚Р°РІС€РµСЃСЏ РѕРїРµСЂР°С‚РѕСЂС‹ РёР· СЃС‚РµРєР° РІ РѕС‡РµСЂРµРґСЊ
 	while (!operator_stack.empty()) {
 		output_queue.push_back(operator_stack.top());
 		operator_stack.pop();
@@ -59,20 +71,20 @@ std::vector<std::string> Calculator::to_rpn(const std::string& expression) {
 	return output_queue;
 }
 
-// Реализация вычисления 
+// Р РµР°Р»РёР·Р°С†РёСЏ РІС‹С‡РёСЃР»РµРЅРёСЏ 
 double Calculator::evaluate_rpn(const std::vector<std::string>& rpn_tokens) {
-	std::stack<double> value_stack; // Стэк для чисел
+	std::stack<double> value_stack; // РЎС‚СЌРє РґР»СЏ С‡РёСЃРµР»
 
 	for (const std::string& token : rpn_tokens) {
-		// Токен - число
+		// РўРѕРєРµРЅ - С‡РёСЃР»Рѕ
 		if (isdigit(token[0]) || (token.length() > 1 && isdigit(token[1]))) {
 			value_stack.push(std::stod(token));
 		}
 
-		// Токен - оператор
+		// РўРѕРєРµРЅ - РѕРїРµСЂР°С‚РѕСЂ
 		else {
 			if (value_stack.size() < 2) {
-				throw std::runtime_error("Ошибка: нет достаточного числа операндов.");
+				throw std::runtime_error("РћС€РёР±РєР°: РЅРµС‚ РґРѕСЃС‚Р°С‚РѕС‡РЅРѕРіРѕ С‡РёСЃР»Р° РѕРїРµСЂР°РЅРґРѕРІ.");
 			}
 			double operand2 = value_stack.top();
 			value_stack.pop();
@@ -80,7 +92,7 @@ double Calculator::evaluate_rpn(const std::vector<std::string>& rpn_tokens) {
 			double operand1 = value_stack.top();
 			value_stack.pop();
 
-			// Выполнение операций 
+			// Р’С‹РїРѕР»РЅРµРЅРёРµ РѕРїРµСЂР°С†РёР№ 
 			if (token == "+") {
 				value_stack.push(operand1 + operand2);
 			}
@@ -92,7 +104,7 @@ double Calculator::evaluate_rpn(const std::vector<std::string>& rpn_tokens) {
 			}
 			else if (token == "/") {
 				if (operand2 == 0) {
-					throw std::runtime_error("Ошибка: деление на 0.");
+					throw std::runtime_error("РћС€РёР±РєР°: РґРµР»РµРЅРёРµ РЅР° 0.");
 				}
 				value_stack.push(operand1 + operand2);
 			}
@@ -100,13 +112,13 @@ double Calculator::evaluate_rpn(const std::vector<std::string>& rpn_tokens) {
 	}
 
 	if (value_stack.size() != 1) {
-		throw std::runtime_error("Ошибка: слишком много операндов.");
+		throw std::runtime_error("РћС€РёР±РєР°: СЃР»РёС€РєРѕРј РјРЅРѕРіРѕ РѕРїРµСЂР°РЅРґРѕРІ.");
 	}
 
-	return value_stack.top(); // Результат вычислений 
+	return value_stack.top(); // Р РµР·СѓР»СЊС‚Р°С‚ РІС‹С‡РёСЃР»РµРЅРёР№ 
 }
 
-// Функция для определения приоритета оператора 
+// Р¤СѓРЅРєС†РёСЏ РґР»СЏ РѕРїСЂРµРґРµР»РµРЅРёСЏ РїСЂРёРѕСЂРёС‚РµС‚Р° РѕРїРµСЂР°С‚РѕСЂР° 
 int Calculator::get_precedence(const std::string& op) {
 	static const std::unordered_map<std::string, int> precedence = {
 		{"+", 1}, {"-", 1},
