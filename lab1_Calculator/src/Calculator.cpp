@@ -68,52 +68,70 @@ double Calculator::calculate(const std::string& expression) {
 }
 
 // Реализация парсера 
+// src/Calculator.cpp
+
 std::vector<std::string> Calculator::to_rpn(const std::string& expression) {
 	std::vector<std::string> output_queue;
 	std::stack<std::string> operator_stack;
 
-	std::stringstream ss(expression);
-	std::string token;
+	for (size_t i = 0; i < expression.length(); ++i) {
+		char c = expression[i];
 
-	while (ss >> token) {
-		// Проверка на то, что токен число
-		if (isdigit(token[0]) || (token.length() > 1 && isdigit(token[1]))) {
-			output_queue.push_back(token);
+		if (isspace(c)) {
+			continue; // Пропускаем пробелы
 		}
-
-		// Проверка на то, что токен один из оперторов
-		else if (token == "+" || token == "-" || token == "*" || token == "/") {
-			while (!operator_stack.empty() && get_precedence(operator_stack.top()) >= get_precedence(token)) {
-				output_queue.push_back(operator_stack.top());
-				operator_stack.pop();
+		// Если символ - цифра, считываем всё число целиком
+		else if (isdigit(c)) {
+			std::string number;
+			while (i < expression.length() && (isdigit(expression[i]) || expression[i] == '.')) {
+				number += expression[i];
+				i++;
 			}
-			operator_stack.push(token);
+			i--; // Возвращаемся на один символ назад, т.к. внешний цикл сделает i++
+			output_queue.push_back(number);
 		}
-
-		// Проверка на то, что токен - это имя загруженной функции 
-		else if (functions.count(token)) {
-			operator_stack.push(token);
+		// Если символ - буква, считываем всё имя функции
+		else if (isalpha(c)) {
+			std::string func_name;
+			while (i < expression.length() && isalpha(expression[i])) {
+				func_name += expression[i];
+				i++;
+			}
+			i--;
+			if (functions.count(func_name)) {
+				operator_stack.push(func_name);
+			}
+			else {
+				// В будущем здесь можно бросить ошибку о неизвестной функции
+			}
 		}
-
-		// Проверка на то, что токен ооткрывающая скобка
-		else if (token == "(") {
-			operator_stack.push(token);
+		else if (c == '(') {
+			operator_stack.push("(");
 		}
-
-		// Проверка на то, что токен закрывающая скобка
-		else if (token == ")") {
-			// Перемещаем операторы из стека в очередь, пока не встретим открывающую скобку
+		else if (c == ')') {
 			while (!operator_stack.empty() && operator_stack.top() != "(") {
 				output_queue.push_back(operator_stack.top());
 				operator_stack.pop();
 			}
-			// Удаляем открывающую скобку из стека
-			if (!operator_stack.empty()) {
+			if (!operator_stack.empty()) operator_stack.pop(); // Выкидываем '('
+
+			// Если после скобки на вершине стека оказалась функция, выталкиваем и её
+			if (!operator_stack.empty() && functions.count(operator_stack.top())) {
+				output_queue.push_back(operator_stack.top());
 				operator_stack.pop();
 			}
 		}
+		else { // Иначе это оператор
+			std::string op(1, c);
+			while (!operator_stack.empty() && get_precedence(operator_stack.top()) >= get_precedence(op)) {
+				output_queue.push_back(operator_stack.top());
+				operator_stack.pop();
+			}
+			operator_stack.push(op);
+		}
 	}
-	// Перемещаем все оставшеся операторы из стека в очередь
+
+	// Выталкиваем все оставшиеся операторы из стека
 	while (!operator_stack.empty()) {
 		output_queue.push_back(operator_stack.top());
 		operator_stack.pop();
@@ -135,7 +153,7 @@ double Calculator::evaluate_rpn(const std::vector<std::string>& rpn_tokens) {
 		// Если токен - это имя известной функции 
 		else if (functions.count(token)) {
 			if (value_stack.empty()) {
-				throw std::runtime_error("Ошибка: недостаточно операндов для функции.");
+				throw std::runtime_error("Ошибка: недостаточно операндов для функции");
 			}
 			double operand = value_stack.top();
 			value_stack.pop();
@@ -146,7 +164,7 @@ double Calculator::evaluate_rpn(const std::vector<std::string>& rpn_tokens) {
 		// Токен - оператор
 		else {
 			if (value_stack.size() < 2) {
-				throw std::runtime_error("Ошибка: нет достаточного числа операндов.");
+				throw std::runtime_error("Ошибка: нет достаточного числа операндов");
 			}
 			double operand2 = value_stack.top();
 			value_stack.pop();
@@ -159,22 +177,25 @@ double Calculator::evaluate_rpn(const std::vector<std::string>& rpn_tokens) {
 				value_stack.push(operand1 + operand2);
 			}
 			else if (token == "-") {
-				value_stack.push(operand1 + operand2);
+				value_stack.push(operand1 - operand2);
 			}
 			else if (token == "*") {
-				value_stack.push(operand1 + operand2);
+				value_stack.push(operand1 * operand2);
 			}
 			else if (token == "/") {
 				if (operand2 == 0) {
-					throw std::runtime_error("Ошибка: деление на 0.");
+					throw std::runtime_error("Ошибка: деление на 0");
 				}
-				value_stack.push(operand1 + operand2);
+				value_stack.push(operand1 / operand2);
+			}
+			else if (token == "^") {
+				value_stack.push(std::pow(operand1, operand2));
 			}
 		}
 	}
 
 	if (value_stack.size() != 1) {
-		throw std::runtime_error("Ошибка: слишком много операндов.");
+		throw std::runtime_error("Ошибка: слишком много операндов");
 	}
 
 	return value_stack.top(); // Результат вычислений 
@@ -184,7 +205,8 @@ double Calculator::evaluate_rpn(const std::vector<std::string>& rpn_tokens) {
 int Calculator::get_precedence(const std::string& op) {
 	static const std::unordered_map<std::string, int> precedence = {
 		{"+", 1}, {"-", 1},
-		{"*", 2}, {"/", 2}
+		{"*", 2}, {"/", 2},
+		{"^", 3}
 	};
 
 	auto it = precedence.find(op);
