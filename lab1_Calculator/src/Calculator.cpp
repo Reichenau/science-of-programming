@@ -90,6 +90,11 @@ std::vector<std::string> Calculator::to_rpn(const std::string& expression) {
 			operator_stack.push(token);
 		}
 
+		// Проверка на то, что токен - это имя загруженной функции 
+		else if (functions.count(token)) {
+			operator_stack.push(token);
+		}
+
 		// Проверка на то, что токен ооткрывающая скобка
 		else if (token == "(") {
 			operator_stack.push(token);
@@ -127,6 +132,17 @@ double Calculator::evaluate_rpn(const std::vector<std::string>& rpn_tokens) {
 			value_stack.push(std::stod(token));
 		}
 
+		// Если токен - это имя известной функции 
+		else if (functions.count(token)) {
+			if (value_stack.empty()) {
+				throw std::runtime_error("Ошибка: недостаточно операндов для функции.");
+			}
+			double operand = value_stack.top();
+			value_stack.pop();
+
+			// Вызов функции из unordered_map
+			value_stack.push(functions[token](operand));
+		}
 		// Токен - оператор
 		else {
 			if (value_stack.size() < 2) {
