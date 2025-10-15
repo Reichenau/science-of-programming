@@ -6,11 +6,11 @@
 
 // Возврат имени операции 
 DllExport const char* getFunctionName() {
-	return "sin";
+	return "cos";
 }
 
 // Функция, которая выполняет вычисления 
 DllExport double execute(double operand) {
 	double radians = operand * M_PI / 180.0;
-	return std::sin(radians);
+	return std::cos(radians);
 }
