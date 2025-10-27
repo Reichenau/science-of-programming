@@ -7,7 +7,7 @@
 
 // Возврат имени операции 
 DllExport const char* getFunctionName() {
-	return "tg";
+    return "tg";
 }
 
 // Функция, которая выполняет вычисления 
