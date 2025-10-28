@@ -417,5 +417,21 @@ FodyWeavers.xsd
 *.msm
 *.msp
 
-# Игнорировать все скомпилированные библиотеки
-*.dll
+# Visual Studio specific
+*.sln
+*.vcxproj*
+.vs/
+[Dd]ebug/
+[Rr]elease/
+x64/
+
+# CMake specific
+[Bb]uild*/
+[Bb]in/
+
+# Compiled outputs
+*.exe
+*.lib
+*.obj
+*.pdb
+*.ilk
