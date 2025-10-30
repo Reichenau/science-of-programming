@@ -47,10 +47,12 @@ void Calculator::loadPlugins() {
             }
 
             auto getFuncName = (const char* (*)())GetProcAddress(handle, "getFunctionName");
-            auto func = (FunctionPtr)GetProcAddress(handle, "execute");
+            auto executeUnary = (UnaryFunctionPtr)GetProcAddress(handle, "execute");
+            auto executeBinary = (BinaryFunctionPtr)GetProcAddress(handle, "executeBinary");
+            auto getArity = (int(*)())GetProcAddress(handle, "getFunctionArity");
 
-            if (getFuncName == nullptr || func == nullptr) {
-                std::cerr << "Ошибка: Не найдены функции getFunctionName или execute в " << entry.path().string() << std::endl;
+            if (getFuncName == nullptr) {
+                std::cerr << "Ошибка: Не найдена функция getFunctionName в " << entry.path().string() << std::endl;
                 FreeLibrary(handle); 
                 continue;
             }
@@ -62,7 +64,47 @@ void Calculator::loadPlugins() {
                 continue;
             }
 
-            functions[funcName] = func;
+            FunctionEntry entryInfo{};
+
+            if (getArity) {
+                int reportedArity = getArity();
+                if (reportedArity == 1) {
+                    entryInfo.arity = 1;
+                    entryInfo.unary = executeUnary;
+                }
+                else if (reportedArity == 2) {
+                    entryInfo.arity = 2;
+                    entryInfo.binary = executeBinary;
+                }
+                else {
+                    std::cerr << "Ошибка: Плагин '" << funcName << "' сообщил неподдерживаемую арность: " << reportedArity << std::endl;
+                }
+            }
+
+            if (entryInfo.arity == 0) {
+                if (executeBinary && !executeUnary) {
+                    entryInfo.arity = 2;
+                    entryInfo.binary = executeBinary;
+                }
+                else if (executeUnary) {
+                    entryInfo.arity = 1;
+                    entryInfo.unary = executeUnary;
+                }
+            }
+
+            if (entryInfo.arity == 1 && entryInfo.unary == nullptr) {
+                std::cerr << "Ошибка: Плагин '" << funcName << "' не предоставляет execute для арности 1." << std::endl;
+            }
+            else if (entryInfo.arity == 2 && entryInfo.binary == nullptr) {
+                std::cerr << "Ошибка: Плагин '" << funcName << "' не предоставляет executeBinary для арности 2." << std::endl;
+            }
+
+            if (entryInfo.arity == 0 || (entryInfo.arity == 1 && entryInfo.unary == nullptr) || (entryInfo.arity == 2 && entryInfo.binary == nullptr)) {
+                FreeLibrary(handle);
+                continue;
+            }
+
+            functions[funcName] = entryInfo;
             plugin_handles.push_back(handle);
             loadedCount++;
         }
@@ -207,22 +249,48 @@ double Calculator::evaluate_rpn(const std::vector<std::string>& rpn_tokens) {
             continue;
         }
 
-        // Если токен - это имя известной нам функции
-        if (functions.count(token)) {
-            if (value_stack.empty()) {
-                throw std::runtime_error("Ошибка: Недостаточно аргументов для функции '" + token + "'");
-            }
-            double operand = value_stack.top();
-            value_stack.pop();
+        auto funcIt = functions.find(token);
+        if (funcIt != functions.end()) {
+            const auto& entry = funcIt->second;
 
-            try {
-                value_stack.push(functions[token](operand));
+            if (entry.arity == 1) {
+                if (value_stack.empty()) {
+                    throw std::runtime_error("Ошибка: Недостаточно аргументов для функции '" + token + "'");
+                }
+
+                double operand = value_stack.top();
+                value_stack.pop();
+
+                try {
+                    value_stack.push(entry.unary(operand));
+                }
+                catch (const std::exception& e) {
+                    throw std::runtime_error("Ошибка при вычислении функции '" + token + "': " + e.what());
+                }
+                catch (...) {
+                    throw std::runtime_error("Неизвестная ошибка при вычислении функции '" + token + "'");
+                }
             }
-            catch (const std::exception& e) {
-                throw std::runtime_error("Ошибка при вычислении функции '" + token + "': " + e.what());
+            else if (entry.arity == 2) {
+                if (value_stack.size() < 2) {
+                    throw std::runtime_error("Ошибка: Недостаточно аргументов для функции '" + token + "'");
+                }
+
+                double operand2 = value_stack.top(); value_stack.pop();
+                double operand1 = value_stack.top(); value_stack.pop();
+
+                try {
+                    value_stack.push(entry.binary(operand1, operand2));
+                }
+                catch (const std::exception& e) {
+                    throw std::runtime_error("Ошибка при вычислении функции '" + token + "': " + e.what());
+                }
+                catch (...) {
+                    throw std::runtime_error("Неизвестная ошибка при вычислении функции '" + token + "'");
+                }
             }
-            catch (...) {
-                throw std::runtime_error("Неизвестная ошибка при вычислении функции '" + token + "'");
+            else {
+                throw std::runtime_error("Ошибка: Неподдерживаемая арность функции '" + token + "'");
             }
         }
         // Если токен - известный оператор
@@ -248,8 +316,8 @@ double Calculator::evaluate_rpn(const std::vector<std::string>& rpn_tokens) {
                 }
                 value_stack.push(operand1 / operand2);
             }
-            else if (token == "^") {
-                value_stack.push(std::pow(operand1, operand2));
+            else {
+                throw std::runtime_error("Ошибка: Неизвестный оператор '" + token + "'");
             }
         }
         else {

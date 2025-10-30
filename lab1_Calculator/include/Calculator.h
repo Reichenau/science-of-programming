@@ -4,7 +4,8 @@
 #include <vector>
 #include <unordered_map>
 
-using FunctionPtr = double(*)(double);
+using UnaryFunctionPtr = double(*)(double);
+using BinaryFunctionPtr = double(*)(double, double);
 
 class Calculator {
 public:
@@ -30,6 +31,12 @@ private:
 	bool is_operator(const std::string& token);
 	bool try_parse_number(const std::string& token, double& value);
 
-	std::unordered_map<std::string, FunctionPtr> functions;
+	struct FunctionEntry {
+		size_t arity = 0;
+		UnaryFunctionPtr unary = nullptr;
+		BinaryFunctionPtr binary = nullptr;
+	};
+
+	std::unordered_map<std::string, FunctionEntry> functions;
 	std::vector<void*> plugin_handles;
 };

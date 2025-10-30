@@ -34,6 +34,26 @@ if(WIN32)
   target_compile_definitions(calc PRIVATE WIN32_LEAN_AND_MEAN NOMINMAX)
 endif()
 
+set(PLUGIN_OUTPUT_DIR ${CMAKE_BINARY_DIR}/plugins)
+
+message(STATUS "Configuring PowerPlugin dynamic library...")
+add_library(PowerPlugin SHARED "${CALCULATOR_DIR}/plugins_src/PowerPlugin.cpp")
+set_target_properties(PowerPlugin PROPERTIES
+    OUTPUT_NAME "PowerPlugin"
+    RUNTIME_OUTPUT_DIRECTORY ${PLUGIN_OUTPUT_DIR}
+    LIBRARY_OUTPUT_DIRECTORY ${PLUGIN_OUTPUT_DIR}
+    ARCHIVE_OUTPUT_DIRECTORY ${PLUGIN_OUTPUT_DIR}
+)
+
+add_custom_command(TARGET PowerPlugin POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${CALCULATOR_DIR}/plugins"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_FILE:PowerPlugin>
+        "${CALCULATOR_DIR}/plugins/$<TARGET_FILE_NAME:PowerPlugin>"
+    COMMENT "Copying PowerPlugin into source plugins directory")
+
+add_dependencies(calc PowerPlugin)
+
 add_custom_command(TARGET calc POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different 
         "${CALCULATOR_DIR}/plugins" 
