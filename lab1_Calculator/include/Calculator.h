@@ -28,6 +28,7 @@ private:
 	double evaluate_rpn(const std::vector<std::string>& rpn_tokens);
 	int get_precedence(const std::string& op);
 	bool is_operator(const std::string& token);
+	bool try_parse_number(const std::string& token, double& value);
 
 	std::unordered_map<std::string, FunctionPtr> functions;
 	std::vector<void*> plugin_handles;

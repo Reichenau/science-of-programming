@@ -7,6 +7,8 @@
 #include <cmath> 
 #include <cctype> 
 #include <stdexcept>
+#include <charconv>
+#include <system_error>
 
 Calculator::Calculator() {}
 
@@ -114,14 +116,9 @@ std::vector<std::string> Calculator::to_rpn(const std::string& expression) {
             }
             i--; 
 
-            try {
-                std::stod(number_str);
-            }
-            catch (const std::invalid_argument&) {
+            double value = 0.0;
+            if (!try_parse_number(number_str, value)) {
                 throw std::runtime_error("Некорректный формат числа: " + number_str);
-            }
-            catch (const std::out_of_range&) {
-                throw std::runtime_error("Число вне допустимого диапазона: " + number_str);
             }
 
             output_queue.push_back(number_str);
@@ -204,18 +201,10 @@ double Calculator::evaluate_rpn(const std::vector<std::string>& rpn_tokens) {
     std::stack<double> value_stack;
 
     for (const std::string& token : rpn_tokens) {
-        try {
-            size_t processed_chars = 0;
-            double number = std::stod(token, &processed_chars);
-            if (processed_chars == token.length()) {
-                value_stack.push(number);
-                continue; 
-            }
-        }
-        catch (const std::invalid_argument&) {
-        }
-        catch (const std::out_of_range&) {
-            throw std::runtime_error("Число вне допустимого диапазона: " + token);
+        double number = 0.0;
+        if (try_parse_number(token, number)) {
+            value_stack.push(number);
+            continue;
         }
 
         // Если токен - это имя известной нам функции
@@ -300,3 +289,16 @@ int Calculator::get_precedence(const std::string& op) {
     auto it = precedence.find(op);
     return (it != precedence.end()) ? it->second : -1; 
 }
+
+bool Calculator::try_parse_number(const std::string& token, double& value) {
+    const char* begin = token.data();
+    const char* end = token.data() + token.size();
+
+    auto result = std::from_chars(begin, end, value, std::chars_format::general);
+    if (result.ec == std::errc::result_out_of_range) {
+        throw std::runtime_error("Число вне допустимого диапазона: " + token);
+    }
+
+    return (result.ec == std::errc() && result.ptr == end);
+}
+
