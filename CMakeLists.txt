@@ -16,10 +16,11 @@ if(NOT MSVC)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_BASE_DIR})
 endif()
 
-
 add_executable(calc 
     "${CALCULATOR_DIR}/src/main.cpp"
     "${CALCULATOR_DIR}/src/Calculator.cpp"
+    "${CALCULATOR_DIR}/src/PluginLoader.cpp"
+    "${CALCULATOR_DIR}/src/ExpressionParser.cpp"
 )
 
 target_include_directories(calc PRIVATE 
