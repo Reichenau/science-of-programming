@@ -12,7 +12,7 @@ int main() {
     }
     catch (const std::exception& e) {
         std::cerr << "Ошибка при загрузке пагинов: " << e.what() << std::endl;
-        return 1; 
+        return 1;
     }
 
     std::cout << "Консольный калькулятор. Введите 'exit' для выхода." << std::endl;
