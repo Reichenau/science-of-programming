@@ -7,4 +7,4 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(include)
 
-add_executable(lab_2_wrapper src/main.cpp)
+add_executable(lab_2_wrapper src/main.cpp src/Subject.cpp)
