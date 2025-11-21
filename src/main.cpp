@@ -1,13 +1,18 @@
 #include <iostream>
 #include "Subject.hpp"
+#include "Engine.hpp"
 
 int main() {
-    std::cout << "Lab 2: Wrapper initialized" << std::endl;
+    setlocale(LC_ALL, "ru");
+
+    std::cout << "Лабораторная работа: Wrapper" << std::endl;
 
     Subject subj;
-    int result = subj.f3(10, 7);
+    Engine engine;
 
-    std::cout << "Result: " << result << std::endl;
+    std::cout << "Движок инициализирован" << std::endl;
+
+    subj.f3(10, 5);
 
     return 0;
 }
