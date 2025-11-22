@@ -1,10 +1,8 @@
 ﻿#pragma once
 #include "Wrapper.hpp"
-#include <functional>
 #include <map>
 #include <string>
 #include <iostream>
-#include <vector>
 #include <utility> 
 
 // Шаблонный класс WrapperImpl
@@ -48,7 +46,6 @@ private:
         }
 
         // 3. Если не нашли — предупреждение 
-        std::cerr << "[WrapperImpl] Warning: Argument '" << key << "' not found in args map" << std::endl;
-        return 0;
+        throw std::invalid_argument("WrapperImpl: Argument '" + key + "' not found provided.");
     }
 };
