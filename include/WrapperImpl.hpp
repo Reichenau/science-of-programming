@@ -5,7 +5,7 @@
 #include <string>
 #include <iostream>
 
-// Шаблонный класс WrapperImpl.
+// Шаблонный класс WrapperImpl
 template<typename T, typename... Args>
 class WrapperImpl : public Wrapper {
 public:
@@ -18,7 +18,7 @@ public:
 
     // Реализация метода execute из базового класса
     int execute(const std::map<std::string, int>& inputArgs) override {
-        std::cout << "[WrapperImpl]" << std::endl;
+        std::cerr << "[WrapperImpl] Warning: Argument '" << key << "' not found in args map" << std::endl;
         return 0;
     }
 
