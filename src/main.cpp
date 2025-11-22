@@ -13,21 +13,21 @@ int main() {
 
     try {
         engine.register_command(&wrapper, "command1");
+
+        // Тест 1
+        std::cout << "Result (4, 5): "
+            << engine.execute("command1", { {"arg1", 4}, {"arg2", 5} })
+            << std::endl;
+
+        // Тест 2
+        std::cout << "Result (10, default): "
+            << engine.execute("command1", { {"arg1", 10} })
+            << std::endl;
     }
     catch (const std::exception& e) {
-        std::cerr << "Exception: " << e.what() << std::endl;
+        std::cerr << "Exception caught: " << e.what() << std::endl;
         return 1;
     }
-
-    // Тест 1: Передаем оба аргумента 
-    std::cout << "Result (4, 5): "
-        << engine.execute("command1", { {"arg1", 4}, {"arg2", 5} })
-        << std::endl;
-
-    // Тест 2: Использование аргумента по умолчанию
-    std::cout << "Result (10, default): "
-        << engine.execute("command1", { {"arg1", 10} })
-        << std::endl;
 
     return 0;
 }

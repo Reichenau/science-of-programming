@@ -3,8 +3,12 @@
 #include <stdexcept>
 
 void Engine::register_command(Wrapper* wrapper, const std::string& commandName) {
+    if (wrapper == nullptr) {
+        throw std::invalid_argument("Engine: Wrapper pointer cannot be null.");
+    }
+
     if (commands.find(commandName) != commands.end()) {
-        throw std::runtime_error("Error: command '" + commandName + "' already registered!");
+        throw std::runtime_error("Engine: Command '" + commandName + "' already registered!");
     }
 
     commands[commandName] = wrapper;
@@ -15,8 +19,7 @@ int Engine::execute(const std::string& commandName, const std::map<std::string, 
     auto it = commands.find(commandName);
 
     if (it == commands.end()) {
-        std::cerr << "[Engine] Error: Command '" << commandName << "' is not registered" << std::endl;
-        return 0;
+        throw std::out_of_range("Engine: Command '" + commandName + "' is not registered.");
     }
 
     std::cout << "[Engine] Executing command '" << commandName << "'..." << std::endl;
