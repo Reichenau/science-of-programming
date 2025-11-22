@@ -3,14 +3,12 @@
 #include "Engine.hpp"
 
 int main() {
-    setlocale(LC_ALL, "ru");
-
-    std::cout << "Лабораторная работа: Wrapper" << std::endl;
+    std::cout << "Lab work: Wrapper" << std::endl;
 
     Subject subj;
     Engine engine;
 
-    std::cout << "Движок инициализирован" << std::endl;
+    std::cout << "Engine initialized" << std::endl;
 
     subj.f3(10, 5);
 

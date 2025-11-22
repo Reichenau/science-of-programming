@@ -4,26 +4,51 @@
 #include <map>
 #include <string>
 #include <iostream>
+#include <vector>
+#include <utility> 
 
 // Шаблонный класс WrapperImpl
 template<typename T, typename... Args>
 class WrapperImpl : public Wrapper {
 public:
-    // Объявляем тип указателя на метод класса T
     using MethodType = int (T::*)(Args...);
 
     WrapperImpl(T* subj, MethodType method, const std::map<std::string, int>& args)
         : subject(subj), method(method), arguments(args) {
     }
 
-    // Реализация метода execute из базового класса
     int execute(const std::map<std::string, int>& inputArgs) override {
-        std::cerr << "[WrapperImpl] Warning: Argument '" << key << "' not found in args map" << std::endl;
-        return 0;
+        return executeInternal(inputArgs, std::index_sequence_for<Args...>{});
     }
 
 private:
     T* subject;                 
     MethodType method;          
     std::map<std::string, int> arguments; 
+
+    template<size_t... Indices>
+    int executeInternal(const std::map<std::string, int>& inputArgs, std::index_sequence<Indices...>) {
+        return (subject->*method)(getArgumentValue(inputArgs, Indices)...);
+    }
+
+    // Получение значения аргумента по индексу
+    int getArgumentValue(const std::map<std::string, int>& inputArgs, size_t index) {
+        std::string key = "arg" + std::to_string(index + 1);
+
+        // 1. Ищем в переданных аргументах 
+        auto it = inputArgs.find(key);
+        if (it != inputArgs.end()) {
+            return it->second;
+        }
+
+        // 2. Ищем в аргументах по умолчанию
+        it = arguments.find(key);
+        if (it != arguments.end()) {
+            return it->second;
+        }
+
+        // 3. Если не нашли — предупреждение 
+        std::cerr << "[WrapperImpl] Warning: Argument '" << key << "' not found in args map" << std::endl;
+        return 0;
+    }
 };
