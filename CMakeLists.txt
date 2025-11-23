@@ -7,6 +7,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(include)
 
-file(GLOB SOURCES "src/*.cpp")
+add_library(core_lib STATIC 
+    src/Engine.cpp 
+    src/Subject.cpp
+)
 
-add_executable(lab_2_wrapper ${SOURCES})
+add_executable(lab_2_wrapper src/main.cpp)
+
+target_link_libraries(lab_2_wrapper PRIVATE core_lib)
