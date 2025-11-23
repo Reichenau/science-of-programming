@@ -8,7 +8,7 @@ void Engine::register_command(Wrapper* wrapper, const std::string& commandName) 
     }
 
     if (commands.find(commandName) != commands.end()) {
-        throw std::runtime_error("Engine: Command '" + commandName + "' already registered!");
+        throw std::runtime_error("Engine: Command '" + commandName + "' already'");
     }
 
     commands[commandName] = wrapper;
@@ -22,7 +22,7 @@ int Engine::execute(const std::string& commandName, const std::map<std::string, 
         throw std::out_of_range("Engine: Command '" + commandName + "' is not registered.");
     }
 
-    std::cout << "[Engine] Executing command '" << commandName << "'..." << std::endl;
+    std::cout << "[Engine] Executing command: '" << commandName << std::endl;
 
     return it->second->execute(args);
 }

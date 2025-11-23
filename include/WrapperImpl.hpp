@@ -13,6 +13,9 @@ public:
 
     WrapperImpl(T* subj, MethodType method, const std::map<std::string, int>& args)
         : subject(subj), method(method), arguments(args) {
+        if (subject == nullptr) {
+            throw std::invalid_argument("WrapperImpl: Subject pointer cannot be null.");
+        }
     }
 
     int execute(const std::map<std::string, int>& inputArgs) override {
