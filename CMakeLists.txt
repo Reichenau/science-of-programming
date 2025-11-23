@@ -8,8 +8,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include_directories(include)
 
 add_library(core_lib STATIC 
-    src/Engine.cpp 
-    src/Subject.cpp
+    src/engine/Engine.cpp 
+    src/subject/Subject.cpp
 )
 
 add_executable(lab_2_wrapper src/main.cpp)

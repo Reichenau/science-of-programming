@@ -2,7 +2,7 @@
 #include <map>
 #include <string>
 #include <any>
-#include "Wrapper.hpp"
+#include "wrapper/Wrapper.hpp"
 
 // Класс движка, который управляет регистрацией и исполнением команд.
 class Engine {

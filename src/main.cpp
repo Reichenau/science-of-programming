@@ -1,7 +1,7 @@
 #include <iostream>
-#include "Subject.hpp"
-#include "Engine.hpp"
-#include "WrapperImpl.hpp"
+#include "subject/Subject.hpp"      
+#include "engine/Engine.hpp"        
+#include "wrapper/WrapperImpl.hpp"
 
 int main() {
     std::cout << "=== Lab work: Wrapper ===" << std::endl;
