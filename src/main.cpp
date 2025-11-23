@@ -9,20 +9,19 @@ int main() {
     Subject subj;
     Engine engine;
 
-    WrapperImpl<Subject, int, int> wrapper(&subj, &Subject::f3, { {"arg1", 0}, {"arg2", 0} });
+    WrapperImpl<Subject, int, int, int> wrapper1(&subj, &Subject::f3, { {"arg1", 0}, {"arg2", 0} });
+    WrapperImpl<Subject, void, const std::string&> wrapper2(&subj, &Subject::print, { {"arg1", std::string("default")} });
 
     try {
-        engine.register_command(&wrapper, "command1");
+        engine.register_command(&wrapper1, "command1");
+        engine.register_command(&wrapper2, "command2");
 
-        // 义耱 1
-        std::cout << "Result (4, 5): "
-            << engine.execute("command1", { {"arg1", 4}, {"arg2", 5} })
-            << std::endl;
+        // 义耱 1 (int)
+        std::any res1 = engine.execute("command1", { {"arg1", 10}, {"arg2", 3} });
+        std::cout << "Result: " << std::any_cast<int>(res1) << std::endl;
 
-        // 义耱 2
-        std::cout << "Result (10, default): "
-            << engine.execute("command1", { {"arg1", 10} })
-            << std::endl;
+        // 义耱 2 (string, void)
+        engine.execute("command2", { {"arg1", std::string("Hello, World!")} });
     }
     catch (const std::exception& e) {
         std::cerr << "Exception caught: " << e.what() << std::endl;
