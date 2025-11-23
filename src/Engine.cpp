@@ -15,7 +15,7 @@ void Engine::register_command(Wrapper* wrapper, const std::string& commandName) 
     std::cout << "[Engine] New command registered: " << commandName << std::endl;
 }
 
-int Engine::execute(const std::string& commandName, const std::map<std::string, int>& args) {
+std::any Engine::execute(const std::string& commandName, const std::map<std::string, std::any>& args) {
     auto it = commands.find(commandName);
 
     if (it == commands.end()) {
