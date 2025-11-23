@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <utility> 
+#include <stdexcept>
 
 // Шаблонный класс WrapperImpl
 template<typename T, typename... Args>
