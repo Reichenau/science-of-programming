@@ -1,9 +1,9 @@
-#pragma once
+п»ї#pragma once
 #include <map>
 #include <string>
 #include <any>
 
-// Абстрактный базовый класс для всех оберток
+// РђР±СЃС‚СЂР°РєС‚РЅС‹Р№ Р±Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ РґР»СЏ РІСЃРµС… РѕР±РµСЂС‚РѕРє
 class Wrapper {
 public:
     virtual ~Wrapper() = default;
