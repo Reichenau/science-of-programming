@@ -8,17 +8,18 @@
 #include <any>
 #include <tuple>
 #include <type_traits>
+#include <vector>
 
 // Шаблонный класс WrapperImpl
 // T - тип класса
-// R - тип возарвщаемого значения 
+// R - тип возвращаемого значения 
 template<typename T, typename R, typename... Args>
 class Wrapper : public IWrapper {
 public:
     using MethodType = R(T::*)(Args...);
 
-    Wrapper(T* subj, MethodType method, const std::map<std::string, std::any>& args)
-        : subject(subj), method(method), arguments(args) {
+    Wrapper(T* subj, MethodType method, const std::map<std::string, std::any>& args, const std::vector<std::string>& names = {})
+        : subject(subj), method(method), arguments(args), argNames(names) {
         if (subject == nullptr) {
             throw std::invalid_argument("WrapperImpl: Subject pointer cannot be null.");
         }
@@ -32,14 +33,15 @@ private:
     T* subject;
     MethodType method;
     std::map<std::string, std::any> arguments;
-    
+    std::vector<std::string> argNames;
+
     using ArgsTuple = std::tuple<Args...>;
 
     template<size_t... Indices>
     std::any executeInternal(const std::map<std::string, std::any>& inputArgs, std::index_sequence<Indices...>) {
         if constexpr (std::is_void_v<R>) {
             (subject->*method)(getArgumentValue<Indices>(inputArgs)...);
-            return {}; 
+            return {};
         }
         else {
             return (subject->*method)(getArgumentValue<Indices>(inputArgs)...);
@@ -50,7 +52,15 @@ private:
     template<size_t index>
     auto getArgumentValue(const std::map<std::string, std::any>& inputArgs) {
         using ArgType = std::tuple_element_t<index, ArgsTuple>;
-        std::string key = "arg" + std::to_string(index + 1);
+
+        std::string key;
+        // Если имена аргументов были переданы, используем их
+        if (index < argNames.size()) {
+            key = argNames[index];
+        }
+        else {
+            key = "arg" + std::to_string(index + 1);
+        }
 
         // 1. Ищем в переданных аргументах 
         auto it = inputArgs.find(key);
@@ -64,7 +74,7 @@ private:
             return std::any_cast<ArgType>(it->second);
         }
 
-        // 3. Если не нашли — предупреждение 
-        throw std::invalid_argument("WrapperImpl: Argument '" + key + "' not found provided.");
+        // 3. Если не нашли — предупреждение (исправлен текст ошибки)
+        throw std::invalid_argument("WrapperImpl: Argument '" + key + "' not provided.");
     }
 };
