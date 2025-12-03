@@ -5,7 +5,7 @@
 
 void Engine::register_command(IWrapper* wrapper, const std::string& commandName) {
     if (!wrapper) {
-        throw std::runtime_error("Engine: Wrapper is null");
+        throw std::runtime_error("Wrapper is null");
     }
 
     if (commands.count(commandName)) {

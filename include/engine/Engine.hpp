@@ -5,13 +5,13 @@
 #include <memory>
 #include "wrapper/Wrapper.hpp"
 
-// Класс движка, который управляет регистрацией и исполнением команд.
+// регистрация команды
 class Engine {
 public:
     // commandName - имя, по которому будем вызывать команду
     void register_command(IWrapper* wrapper, const std::string& commandName);
 
-    // Выполнение команды по имени с передачей аргументов
+    // Выолнение команды 
     std::any execute(const std::string& commandName, const std::map<std::string, std::any>& args);
 
 private:

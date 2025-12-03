@@ -20,8 +20,8 @@ public:
 
     Wrapper(T* subj, MethodType method, const std::map<std::string, std::any>& args, const std::vector<std::string>& names = {})
         : subject(subj), method(method), arguments(args), argNames(names) {
-        if (subject == nullptr) {
-            throw std::invalid_argument("WrapperImpl: Subject pointer cannot be null.");
+        if (!subject) {
+            throw std::runtime_error("Subject is null");
         }
     }
 
@@ -57,8 +57,7 @@ private:
         if (index < argNames.size()) {
             key = argNames[index];
         }
-        else {
-            // Просто и понятно, без лишней логики
+        else 
             key = "arg" + std::to_string(index + 1);
         }
 
@@ -74,7 +73,7 @@ private:
             return std::any_cast<ArgType>(it->second);
         }
 
-        // 3. Если не нашли — предупреждение (исправлен текст ошибки)
+        // 3. Если не нашли - предупреждение 
         throw std::invalid_argument("WrapperImpl: Argument '" + key + "' not provided.");
     }
 };

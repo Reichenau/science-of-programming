@@ -5,13 +5,16 @@
 #include "wrapper/WrapperImpl.hpp"
 
 int main() {
+    // Создаем объекты
     Subject subj;
     Engine engine;
 
     Wrapper wrapper1(&subj, &Subject::f3, { {"arg1", 0}, {"arg2", 0} });
     Wrapper wrapper2(&subj, &Subject::print, { {"arg1", std::string("default")} });
 
+    // Создаем обертки для методов
     try {
+        // Регистрируем команды
         engine.register_command(&wrapper1, "command1");
         engine.register_command(&wrapper2, "command2");
 
