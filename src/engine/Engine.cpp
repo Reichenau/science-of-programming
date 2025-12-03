@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <utility>
 
-void Engine::register_command(std::unique_ptr<Wrapper> wrapper, const std::string& commandName) {
+void Engine::register_command(IWrapper* wrapper, const std::string& commandName) {
     if (wrapper == nullptr) {
         throw std::invalid_argument("Engine: Wrapper pointer cannot be null.");
     }
