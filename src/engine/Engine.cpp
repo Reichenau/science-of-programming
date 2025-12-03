@@ -12,7 +12,7 @@ void Engine::register_command(IWrapper* wrapper, const std::string& commandName)
         throw std::runtime_error("Engine: Command '" + commandName + "' already'");
     }
 
-    commands[commandName] = std::move(wrapper);
+    commands[commandName] = wrapper;
     std::cout << "[Engine] New command registered: " << commandName << std::endl;
 }
 
