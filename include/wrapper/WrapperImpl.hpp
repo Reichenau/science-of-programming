@@ -54,11 +54,11 @@ private:
         using ArgType = std::tuple_element_t<index, ArgsTuple>;
 
         std::string key;
-        // Если имена аргументов были переданы, используем их
         if (index < argNames.size()) {
             key = argNames[index];
         }
         else {
+            // Просто и понятно, без лишней логики
             key = "arg" + std::to_string(index + 1);
         }
 
