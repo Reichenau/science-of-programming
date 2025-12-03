@@ -57,7 +57,7 @@ private:
         if (index < argNames.size()) {
             key = argNames[index];
         }
-        else 
+        else{
             key = "arg" + std::to_string(index + 1);
         }
 
@@ -74,6 +74,6 @@ private:
         }
 
         // 3. Если не нашли - предупреждение 
-        throw std::invalid_argument("WrapperImpl: Argument '" + key + "' not provided.");
+        throw std::invalid_argument("Missing argument");
     }
 };

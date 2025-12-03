@@ -19,7 +19,8 @@ int main() {
         engine.register_command(&wrapper2, "command2");
 
         // Тест 1 (int)
-        std::cout << "Result: " << std::any_cast<int>(engine.execute("command1", { {"arg1", 4}, {"arg2", 5} })) << std::endl;
+        auto result = engine.execute("command1", { {"arg1", 4}, {"arg2", 5} });
+        std::cout << "Result: " << std::any_cast<int>(result) << std::endl;
 
         // Тест 2 (string, void)
         engine.execute("command2", { {"arg1", std::string("Hello World!")} });
