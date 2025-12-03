@@ -13,11 +13,11 @@
 // T - тип класса
 // R - тип возарвщаемого значения 
 template<typename T, typename R, typename... Args>
-class WrapperImpl : public Wrapper {
+class Wrapper : public IWrapper {
 public:
     using MethodType = R(T::*)(Args...);
 
-    WrapperImpl(T* subj, MethodType method, const std::map<std::string, std::any>& args)
+    Wrapper(T* subj, MethodType method, const std::map<std::string, std::any>& args)
         : subject(subj), method(method), arguments(args) {
         if (subject == nullptr) {
             throw std::invalid_argument("WrapperImpl: Subject pointer cannot be null.");
@@ -68,8 +68,3 @@ private:
         throw std::invalid_argument("WrapperImpl: Argument '" + key + "' not found provided.");
     }
 };
-
-template<typename T, typename R, typename... Args>
-std::unique_ptr<Wrapper> make_wrapper(T* subj, R(T::* method)(Args...), const std::map<std::string, std::any>& args) {
-    return std::make_unique<WrapperImpl<T, R, Args...>>(subj, method, args);
-}

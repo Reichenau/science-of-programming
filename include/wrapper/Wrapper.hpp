@@ -4,9 +4,9 @@
 #include <any>
 
 // Абстрактный базовый класс для всех оберток
-class Wrapper {
+class IWrapper {
 public:
-    virtual ~Wrapper() = default;
+    virtual ~IWrapper() = default;
 
     virtual std::any execute(const std::map<std::string, std::any>& args) = 0;
 };
