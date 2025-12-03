@@ -68,3 +68,8 @@ private:
         throw std::invalid_argument("WrapperImpl: Argument '" + key + "' not found provided.");
     }
 };
+
+template<typename T, typename R, typename... Args>
+std::unique_ptr<Wrapper> make_wrapper(T* subj, R(T::* method)(Args...), const std::map<std::string, std::any>& args) {
+    return std::make_unique<WrapperImpl<T, R, Args...>>(subj, method, args);
+}

@@ -1,6 +1,5 @@
 ﻿#include <iostream>
 #include <any>
-#include <memory>
 #include "subject/Subject.hpp"      
 #include "engine/Engine.hpp"        
 #include "wrapper/WrapperImpl.hpp"
@@ -11,12 +10,8 @@ int main() {
     Subject subj;
     Engine engine;
 
-    auto wrapper1 = std::make_unique<WrapperImpl<Subject, int, int, int>>(
-        &subj, &Subject::f3, std::map<std::string, std::any>{ {"arg1", 0}, { "arg2", 0 } }
-    );
-    auto wrapper2 = std::make_unique<WrapperImpl<Subject, void, const std::string&>>(
-        &subj, &Subject::print, std::map<std::string, std::any>{ {"arg1", std::string("default")} }
-    );
+    auto wrapper1 = make_wrapper(&subj, &Subject::f3, { {"arg1", 0}, {"arg2", 0} });
+    auto wrapper2 = make_wrapper(&subj, &Subject::print, { {"arg1", std::string("default")} });
 
     try {
         engine.register_command(std::move(wrapper1), "command1");
