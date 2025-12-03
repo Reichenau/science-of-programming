@@ -41,9 +41,18 @@ std::cout << engine.execute("command1", { {"arg1", 4}, {"arg2", 5} }) << std::en
 ### Консоль 
 
 ```bash
+git clone https://github.com/Reichenau/science-of-programming.git
+cd science-of-programming
+git checkout lab_2_wrapper
+
+# Переход в папку лабораторной
+cd science-of-programming-lab_2_wrapper 
+
 mkdir build
 cd build
 cmake ..
 cmake --build .
+
+# Запуск (для Windows/Visual Studio)
 ./Debug/lab_2_wrapper.exe
 ```
