@@ -1,5 +1,5 @@
 # Лабораторная работа 2: Обертка (Wrapper)
-Выолнил: Шильдт Даниэль 5030102/30202
+Выполнил: Шильдт Даниэль 5030102/30202
 
 ## Задание
 
@@ -45,14 +45,14 @@ git clone https://github.com/Reichenau/science-of-programming.git
 cd science-of-programming
 git checkout lab_2_wrapper
 
-# Переход в папку лабораторной (если она не в корне)
-cd science-of-programming-lab_2_wrapper 
-
 mkdir build
 cd build
 cmake ..
 cmake --build .
 
-# Запуск (для Windows/Visual Studio)
+# Запуск на Windows (Visual Studio)
 ./Debug/lab_2_wrapper.exe
+
+# Запуск на Linux / macOS
+./lab_2_wrapper
 ```
