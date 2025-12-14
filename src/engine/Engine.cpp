@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <utility>
 
-void Engine::register_command(IWrapper* wrapper, const std::string& commandName) {
+void Engine::register_command(std::unique_ptr<IWrapper> wrapper, const std::string& commandName) {
     if (!wrapper) {
         throw std::runtime_error("Wrapper is null");
     }
@@ -12,7 +12,7 @@ void Engine::register_command(IWrapper* wrapper, const std::string& commandName)
         throw std::runtime_error("Command already exists: " + commandName);
     }
 
-    commands[commandName] = wrapper;
+    commands[commandName] = std::move(wrapper);
     std::cout << "Registered: " << commandName << std::endl;
 }
 
