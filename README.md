@@ -13,8 +13,6 @@ Engine engine;
 engine.register_command(&wrapper, "command1");
 
 std::cout << engine.execute("command1", { {"arg1", 4}, {"arg2", 5} }) << std::endl;
-// Этот фрагмент из задания, но для запуска нужен any_cast (см. ниже)
-std::any_cast<int>(engine.execute("command1", { {"arg1", 4}, {"arg2", 5} }));
 ```
 ## Описание
 
@@ -25,12 +23,10 @@ std::any_cast<int>(engine.execute("command1", { {"arg1", 4}, {"arg2", 5} }));
 4. Вызвать команду по имени, передав новые аргументы.
 
 ### Структура проекта 
-
+```
 lab_2_wrapper/ 
 ├── include/ 
-│ 
-├── engine/ 
-│ 
+│ ├── engine/ 
 │ └── Engine.hpp			   // Объявление класса Engine 
 │ ├── subject/ 
 │ │ └── Subject.hpp			   // Тестовый класс с методами 
@@ -49,7 +45,7 @@ lab_2_wrapper/
 ├── .gitignore 
 ├── CMakeLists.txt 
 └── README.md
-
+```
 ### Архитектура
 
 * **Subject** — класс (метод `f3`).
