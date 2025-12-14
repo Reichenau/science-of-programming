@@ -24,6 +24,7 @@ out/
 *.out
 *.app
 lab_2_wrapper
+wrapper_tests  
 
 # OS specific
 .DS_Store
