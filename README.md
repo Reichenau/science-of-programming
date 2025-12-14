@@ -24,12 +24,49 @@ std::any_cast<int>(engine.execute("command1", { {"arg1", 4}, {"arg2", 5} }));
 3. Зарегистрировать команду в движке (`Engine`).
 4. Вызвать команду по имени, передав новые аргументы.
 
+### Структура проекта 
+
+lab_2_wrapper/ 
+├── include/ 
+│ 
+├── engine/ 
+│ 
+│ └── Engine.hpp			   // Объявление класса Engine 
+│ ├── subject/ 
+│ │ └── Subject.hpp			   // Тестовый класс с методами 
+│ └── wrapper/ 
+│ ├── Wrapper.hpp              // Абстрактный интерфейс обертки
+│ └── WrapperImpl.hpp          // Шаблонная реализация обертки
+├── src/ 
+│ ├── engine/ 
+│ │ └── Engine.cpp 
+│ ├── main.cpp                 // Точка входа: запускает все модульные тесты 
+│ └── subject/ 
+│ └── Subject.cpp 
+├── tests/ 
+│ ├── test.hpp                 // Объявление функции run_all_tests() 
+│ └── testWrapper.cpp          // Реализация 6 модульных тестов 
+├── .gitignore 
+├── CMakeLists.txt 
+└── README.md
+
 ### Архитектура
 
 * **Subject** — класс (метод `f3`).
 * **Wrapper (интерфейс)** — абстрактный базовый класс для унификации хранения команд.
 * **WrapperImpl (шаблон)** — конкретная реализация обертки. Хранит указатель на объект, метод и аргументы.
 * **Engine** — менеджер команд. Хранит реестр команд (`std::map`) и управляет их вызовом.
+
+## Тестирование (Unit Tests)
+
+| ID | Описание теста | Проверяемая функциональность |
+| :--- | :--- | :--- |
+| **Test 1** | Basic Execution (int) | Корректный вызов метода с возвращаемым значением (`Subject::f3`). |
+| **Test 2** | Void Method Execution | Корректный вызов метода `void` (`Subject::print`) и возврат пустого `std::any`. |
+| **Test 3** | Default Values Override | Использование значений по умолчанию, когда часть аргументов передана, а часть берется из `defaults`. |
+| **Test 4** | Error: Command Not Found | Обработка исключения `std::runtime_error`, когда команда не зарегистрирована в `Engine`. |
+| **Test 5** | Error: Missing Required Arg | Обработка исключения `std::invalid_argument`, когда аргумент не передан и отсутствует в `defaults`. |
+| **Test 6** | Error: Return Type Mismatch | Обработка исключения `std::bad_any_cast` при попытке извлечь результат неверного типа. |
 
 ## Требования
 
