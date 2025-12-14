@@ -1,7 +1,6 @@
 #include "engine/Engine.hpp" 
 #include <iostream>
 #include <stdexcept>
-#include <utility>
 
 void Engine::register_command(std::unique_ptr<IWrapper> wrapper, const std::string& commandName) {
     if (!wrapper) {
@@ -13,7 +12,6 @@ void Engine::register_command(std::unique_ptr<IWrapper> wrapper, const std::stri
     }
 
     commands[commandName] = std::move(wrapper);
-    std::cout << "Registered: " << commandName << std::endl;
 }
 
 std::any Engine::execute(const std::string& commandName, const std::map<std::string, std::any>& args) {
