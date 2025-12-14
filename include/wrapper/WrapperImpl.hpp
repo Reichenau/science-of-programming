@@ -23,6 +23,12 @@ public:
         if (!subject) {
             throw std::runtime_error("Subject is null");
         }
+
+        if (argNames.empty() && !arguments.empty()) {
+            for (const auto& pair : arguments) {
+                argNames.push_back(pair.first);
+            }
+        }
     }
 
     std::any execute(const std::map<std::string, std::any>& inputArgs) override {
