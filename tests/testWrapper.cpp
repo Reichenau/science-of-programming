@@ -31,7 +31,7 @@ std::unique_ptr<IWrapper> makeWrapper(Subject* subj, R(Subject::* method)(Args..
     return std::make_unique<Wrapper<Subject, R, Args...>>(subj, method, defaults);
 }
 
-// Тест 1: Базовая целочисленная операция (a - b)
+// РўРµСЃС‚ 1: Р‘Р°Р·РѕРІР°СЏ С†РµР»РѕС‡РёСЃР»РµРЅРЅР°СЏ РѕРїРµСЂР°С†РёСЏ (a - b)
 void test1_basic_execution() {
     Subject subj;
     Engine engine;
@@ -48,7 +48,7 @@ void test1_basic_execution() {
     }
 }
 
-// Тест 2: Обработка void (Subject::print)
+// РўРµСЃС‚ 2: РћР±СЂР°Р±РѕС‚РєР° void (Subject::print)
 void test2_void_method() {
     Subject subj;
     Engine engine;
@@ -59,7 +59,7 @@ void test2_void_method() {
     engine.execute("print_log", { {"message", std::string("Test message")} });
 }
 
-// Тест 3: Использование значения по умолчанию
+// РўРµСЃС‚ 3: РСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ Р·РЅР°С‡РµРЅРёСЏ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 void test3_default_values() {
     Subject subj;
     Engine engine;
@@ -74,8 +74,7 @@ void test3_default_values() {
         throw std::runtime_error("Expected 17, got " + std::to_string(actual));
     }
 }
-
-// Тест 4: Ошибка: Команда не найдена
+// РўРµСЃС‚ 4: РћС€РёР±РєР°: РљРѕРјР°РЅРґР° РЅРµ РЅР°Р№РґРµРЅР°
 void test4_command_not_found() {
     Engine engine;
     bool exception_caught = false;
@@ -90,7 +89,7 @@ void test4_command_not_found() {
     }
 }
 
-// Тест 5: Ошибка: Отсутствует обязательный аргумент
+// РўРµСЃС‚ 5: РћС€РёР±РєР°: РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РѕР±СЏР·Р°С‚РµР»СЊРЅС‹Р№ Р°СЂРіСѓРјРµРЅС‚
 void test5_missing_required_argument() {
     Subject subj;
     Engine engine;
@@ -111,7 +110,7 @@ void test5_missing_required_argument() {
     }
 }
 
-// Тест 6: Ошибка: Несовпадение типа возвращаемого значения
+// РўРµСЃС‚ 6: РћС€РёР±РєР°: РќРµСЃРѕРІРїР°РґРµРЅРёРµ С‚РёРїР° РІРѕР·РІСЂР°С‰Р°РµРјРѕРіРѕ Р·РЅР°С‡РµРЅРёСЏ
 void test6_return_type_mismatch() {
     Subject subj;
     Engine engine;
